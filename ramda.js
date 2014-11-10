@@ -1921,6 +1921,9 @@
      *      R.map(double, [1, 2, 3]); //=> [2, 4, 6]
      */
     function _map(fn, list) {
+        if (list === _xf_flag) {
+            return _xfMap(fn);
+        }
         var idx = -1, len = list.length, result = new Array(len);
         while (++idx < len) {
             result[idx] = fn(list[idx]);
@@ -2029,6 +2032,44 @@
             return acc;
         }, {}, keys(obj));
     });
+
+
+    R.xf = {};
+
+    var _xf_flag = {};
+
+    R.xf.transduce = curry(function xf_transduce(xform, f, init, coll) {
+        return R.reduce(xform(f), init, coll);
+    });
+
+    R.xf.convert = function xf_convert(fn) {
+        return fn(_xf_flag);
+    };
+
+    R.xf.compose = function xf_compose() {
+        var funcs = R.map(R.xf.convert, _slice(arguments));
+        return R.compose.apply(null, funcs);
+    };
+
+    R.xf.concat = function xf_concat(a, b) {
+        return a.concat([b]);
+    };
+
+    function _xfFilter(predicateFn) {
+        return function _xfFilterCollect(collectionFn) {
+            return function _xfFilterResult(result, input) {
+                return (predicateFn(input) ? collectionFn(result, input) : result);
+            };
+        };
+    }
+
+    function _xfMap(transformFn) {
+        return function _xfMapCollect(collectionFn) {
+            return function _xfMapResult(result, input) {
+                return collectionFn(result, transformFn(input));
+            };
+        };
+    }
 
     /**
      * Scanl is similar to reduce, but returns a list of successively reduced values from the left
@@ -2257,6 +2298,9 @@
      *      R.filter(isEven, [1, 2, 3, 4]); //=> [2, 4]
      */
     function _filter(fn, list) {
+        if (list === _xf_flag) {
+            return _xfFilter(fn);
+        }
         var idx = -1, len = list.length, result = [];
         while (++idx < len) {
             if (fn(list[idx])) {
