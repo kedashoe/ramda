@@ -30,4 +30,4 @@ var _xidentity = require('./internal/_xidentity');
  *
  *      R.map(double, [1, 2, 3]); //=> [2, 4, 6]
  */
-module.exports = _curry1(_dispatchable('identity', _xidentity, _identity));
+module.exports = _curry1(_dispatchable('map', _xidentity, _identity));
