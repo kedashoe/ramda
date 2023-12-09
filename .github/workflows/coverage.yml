@@ -1,12 +1,12 @@
 name: Coverage
 
-on:
-  pull_request_target:
-    types: [edited, opened, synchronize, ready_for_review, review_requested, reopened]
+on: [pull_request, push]
+  #pull_request_target:
+    #types: [edited, opened, synchronize, ready_for_review, review_requested, reopened]
 
 jobs:
   coverage:
-    if: github.repository == 'ramda/ramda'
+    #if: github.repository == 'ramda/ramda'
     runs-on: ubuntu-latest
     name: Coverage
 
